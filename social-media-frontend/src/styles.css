@@ -1,17 +1,21 @@
 :root {
-  --primary: #1877f2;
-  --primary-dark: #166fe5;
-  --secondary: #42b72a;
-  --secondary-dark: #36a420;
-  --danger: #ff4444;
-  --danger-dark: #cc0000;
-  --text: #050505;
-  --text-light: #65676b;
-  --bg: #f0f2f5;
+  --primary: #4361ee;
+  --primary-dark: #3a56d4;
+  --secondary: #3f37c9;
+  --accent: #4895ef;
+  --danger: #f72585;
+  --success: #4cc9f0;
+  --warning: #f8961e;
+  --text: #2b2d42;
+  --text-light: #8d99ae;
+  --bg: #f8f9fa;
   --card: #ffffff;
-  --border: #dddfe2;
+  --border: #e9ecef;
   --shadow: rgba(0, 0, 0, 0.1);
+  --gradient-start: #4361ee;
+  --gradient-end: #3a0ca3;
 }
+
 
 * {
   box-sizing: border-box;
@@ -20,13 +24,22 @@
 }
 
 body {
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+  background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+  background-attachment: fixed;
   color: var(--text);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
   line-height: 1.6;
   min-height: 100vh;
   padding: 20px;
 }
+
+.app-header {
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px; 
+  padding: 20px;
+}
+
 
 .app-container {
   max-width: 1200px;
@@ -34,10 +47,13 @@ body {
 }
 
 .app {
-  background-color: var(--card);
+  background-color: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
-  box-shadow: 0 4px 12px var(--shadow);
-  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 25px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 header {
@@ -212,20 +228,27 @@ button:hover {
 
 /* Alert Styles */
 .alerts-container {
-  position: fixed;
+  position: sticky;
   top: 20px;
-  right: 20px;
+  left: 50%;
+  transform: translateX(-50%); /* Centers the alert container horizontally */
   z-index: 1000;
+  max-width: 500px; /* Optional: limits the width of the alert container */
+  width: 100%; /* Ensures it takes up full width up to max-width */
+  padding: 0 10px; /* Optional: Adds some padding for responsiveness */
 }
 
+/* Individual alert box */
 .alert {
   padding: 12px 20px;
   border-radius: 8px;
   margin-bottom: 10px;
   color: white;
   animation: slideIn 0.3s ease-out;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center; /* Centers the text inside the alert */
 }
+
 
 .alert.success {
   background-color: var(--secondary);
@@ -376,10 +399,13 @@ button:hover {
   }
   
   header {
+    
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
   }
+
+  
   
   .post-form textarea {
     min-height: 80px;
@@ -498,4 +524,234 @@ button:hover {
 .cancel-btn {
   background-color: var(--danger);
   color: white;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.comment {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Enhanced mobile responsiveness */
+@media (max-width: 768px) {
+  .app {
+    padding: 15px;
+    border-radius: 0;
+  }
+  
+  .post {
+    padding: 12px;
+  }
+  
+  .post-actions {
+    flex-wrap: wrap;
+  }
+  
+  .comment-actions {
+    flex-wrap: wrap;
+  }
+  
+  .comment-form textarea {
+    min-height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+  
+  .post-stats {
+    gap: 10px;
+    justify-content: space-between;
+  }
+  
+  .comment {
+    padding: 10px;
+  }
+}
+
+.comment-btn {
+  background: none;
+  color: var(--text-light);
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.2s;
+}
+
+.comment-btn:hover {
+  color: var(--accent);
+}
+
+.comments-section {
+  margin-top: 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 15px;
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.comment-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  resize: vertical;
+  min-height: 80px;
+  transition: all 0.3s ease;
+  background-color: var(--bg);
+}
+
+.comment-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+}
+
+.comment-submit-btn {
+  align-self: flex-end;
+  background-color: var(--primary);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.comment-submit-btn:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.comment {
+  background-color: var(--bg);
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 2px 4px var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.comment:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--shadow);
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.comment-profile-pic {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+}
+
+.comment-username {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.comment-content {
+  margin-bottom: 10px;
+  padding: 0 5px;
+  line-height: 1.5;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.comment-like-btn {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.comment-like-btn:hover {
+  background-color: rgba(67, 97, 238, 0.1);
+  color: var(--primary);
+}
+
+.comment-edit-btn, .comment-delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.comment-edit-btn {
+  color: var(--primary);
+}
+
+.comment-edit-btn:hover {
+  background-color: rgba(67, 97, 238, 0.1);
+}
+
+.comment-delete-btn {
+  color: var(--danger);
+}
+
+.comment-delete-btn:hover {
+  background-color: rgba(247, 37, 133, 0.1);
+}
+
+.comment-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.comment-edit-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.comment-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }

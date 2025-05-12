@@ -1,11 +1,12 @@
 package com.ducut.socialmedia.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "posts")
-public class Post {
+@Table(name = "comments")
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,22 +15,24 @@ public class Post {
     private String userImageUrl;
     private String content;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private int likeCount = 0;
-    private int shareCount = 0;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    @JsonBackReference
+    private Post post;
 
     // Constructors
-    public Post() {
+    public Comment() {
         this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
-    public Post(String username, String userImageUrl, String content) {
+    public Comment(String username, String userImageUrl, String content, Post post) {
         this.username = username;
         this.userImageUrl = userImageUrl;
         this.content = content;
+        this.post = post;
         this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
     // Getters and Setters
@@ -63,7 +66,6 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
-        this.updatedAt = LocalDateTime.now();
     }
 
     public LocalDateTime getCreatedAt() {
@@ -74,14 +76,6 @@ public class Post {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public int getLikeCount() {
         return likeCount;
     }
@@ -90,11 +84,11 @@ public class Post {
         this.likeCount = likeCount;
     }
 
-    public int getShareCount() {
-        return shareCount;
+    public Post getPost() {
+        return post;
     }
 
-    public void setShareCount(int shareCount) {
-        this.shareCount = shareCount;
+    public void setPost(Post post) {
+        this.post = post;
     }
 }

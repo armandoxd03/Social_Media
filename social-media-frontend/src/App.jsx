@@ -108,20 +108,112 @@ export default function App() {
     }
   };
 
+// Add comment to post
+const handleAddComment = async (postId, commentContent) => {
+  try {
+    // Step 1: Add the comment via API
+    const response = await axios.post(`${API_URL}/${postId}/comments`, {
+      username: user.username,
+      userImageUrl: user.userImageUrl,
+      content: commentContent
+    });
+
+    // Step 2: Re-fetch the post to get updated comments
+    const updatedPostResponse = await axios.get(`${API_URL}/${postId}`);
+    const updatedPost = updatedPostResponse.data;
+
+    // Step 3: Update the state with the refetched post
+    setPosts(posts.map(post => post.id === postId ? updatedPost : post));
+
+    addAlert('Comment added successfully!');
+    return true;
+  } catch (error) {
+    addAlert('Failed to add comment', 'error');
+    return false;
+  }
+};
+
+ // Update comment
+const handleUpdateComment = async (postId, commentId, updatedContent) => {
+  try {
+    const response = await axios.put(`${API_URL}/${postId}/comments/${commentId}`, {
+      content: updatedContent
+    });
+
+    // Update the comments locally
+    setPosts(posts.map(post =>
+      post.id === postId ? {
+        ...post,
+        comments: post.comments.map(comment =>
+          comment.id === commentId ? response.data : comment
+        )
+      } : post
+    ));
+
+    addAlert('Comment updated successfully!');
+    return true;
+  } catch (error) {
+    addAlert('Failed to update comment', 'error');
+    return false;
+  }
+};
+
+  // Delete comment
+const handleDeleteComment = async (postId, commentId) => {
+  try {
+    await axios.delete(`${API_URL}/${postId}/comments/${commentId}`);
+
+    // Remove the comment from the local state
+    setPosts(posts.map(post =>
+      post.id === postId ? {
+        ...post,
+        comments: post.comments.filter(comment => comment.id !== commentId)
+      } : post
+    ));
+
+    addAlert('Comment deleted successfully!');
+  } catch (error) {
+    addAlert('Failed to delete comment', 'error');
+  }
+};
+// Like comment
+const handleLikeComment = async (postId, commentId) => {
+  try {
+    const response = await axios.post(`${API_URL}/${postId}/comments/${commentId}/like`);
+
+    // Update the like count for the comment
+    setPosts(posts.map(post =>
+      post.id === postId ? {
+        ...post,
+        comments: post.comments.map(comment =>
+          comment.id === commentId ? { ...comment, likeCount: response.data.likeCount } : comment
+        )
+      } : post
+    ));
+
+  } catch (error) {
+    addAlert('Failed to like comment', 'error');
+  }
+};
+
   // Update user profile
   const handleUserUpdate = (newUserData) => {
     setUser(newUserData);
     addAlert('Profile updated!');
   };
 
-  // Add alert message
-  const addAlert = (message, type = 'success') => {
-    const id = Date.now();
-    setAlerts([...alerts, { id, message, type }]);
+// Add alert message
+const addAlert = (message, type = 'success') => {
+  const id = Date.now();
+  setAlerts(prevAlerts => {
+    const newAlerts = [...prevAlerts, { id, message, type }];
     setTimeout(() => {
-      setAlerts(alerts.filter(alert => alert.id !== id));
+      setAlerts(prevAlerts => prevAlerts.filter(alert => alert.id !== id));
     }, 3000);
-  };
+    return newAlerts;
+  });
+};
+
 
   return (
     <div className="app-container">
@@ -134,12 +226,12 @@ export default function App() {
           ))}
         </div>
 
-        <header>
+        <header className="app-header">
           <h1>Social Media App</h1>
           <UserProfile user={user} onUpdate={handleUserUpdate} />
         </header>
 
-        <main>
+        <main className="app-main">
           <button 
             className="bulk-toggle-btn"
             onClick={() => setShowBulkUpload(!showBulkUpload)}
@@ -160,10 +252,15 @@ export default function App() {
               <Post
                 key={post.id}
                 post={post}
+                currentUser={user}
                 onEdit={handleUpdatePost}
                 onDelete={handleDeletePost}
                 onLike={handleLikePost}
                 onShare={handleSharePost}
+                onAddComment={handleAddComment}
+                onUpdateComment={handleUpdateComment}
+                onDeleteComment={handleDeleteComment}
+                onLikeComment={handleLikeComment}
               />
             ))}
           </div>
